@@ -4,10 +4,10 @@ import * as vscode from 'vscode';
 
 export class VCDEditorProvider extends WaveformEditorProvider<VCDDocument> {
 
-    public static register(): vscode.Disposable {
+    public static register(context: vscode.ExtensionContext): vscode.Disposable {
         return vscode.window.registerCustomEditorProvider(
             'waveform.vcd',
-            new VCDEditorProvider()
+            new VCDEditorProvider(context)
         );
     }
     

@@ -1,0 +1,43 @@
+/* Remove default bullets */
+ul, .hierarchy {
+    list-style-type: none;
+    padding-left: 10px;
+}
+
+/* Remove margins and padding from the parent ul */
+.hierarchy {
+    margin: 0;
+    padding: 0;
+}
+
+/* Style the caret/arrow */
+.caret {
+    cursor: pointer;
+    user-select: none; /* Prevent text selection */
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+.caret::before {
+    content: "\2304";
+    color: white;
+    display: inline-block;
+    margin-right: 6px;
+    transform: rotate(-90deg);
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+.caret-down::before {
+    transform: rotate(0deg);
+}
+
+/* Hide the nested list */
+.nested {
+    display: none;
+    padding-left: 10px;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+.active {
+    display: block;
+    padding-left: 10px;
+}

@@ -22,7 +22,8 @@ export abstract class HierarchicalRenderer<T> {
                 <li><span class="caret">${this.getName(object)}</span>
                 <ul class="nested">
                     ${this.renderObjectList(children)}
-                </ul> 
+                </ul>
+                </li>
             `;
         } else {
             return `<li>${this.getName(object)}</li>`;
