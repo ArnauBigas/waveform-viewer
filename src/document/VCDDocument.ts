@@ -105,14 +105,16 @@ class VCDParser {
                 case VCDParserState.READING_UPSCOPE:
                     if (tok === "$end") {
                         state = VCDParserState.DEFAULT;
-                    } else {
+
                         if (currentScope === null) {
                             throw Error("Parsed an $upscode command but current scope is null");
                         }
 
-                        if (currentScope.hasParent()) {
+                        if (currentScope.parent !== null) {
                             currentScope = currentScope.parent;
                         }
+                    } else {
+                        throw Error("Unexpected token after $upscope: " + tok);
                     }
                     break;
                 case VCDParserState.READING_VAR_TYPE:

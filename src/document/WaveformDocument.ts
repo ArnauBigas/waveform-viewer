@@ -24,6 +24,10 @@ export class WaveformModule {
         this._signals = [];
         this._modules = [];
         this._parent = parent;
+
+        if (parent !== null) {
+            parent.addModule(this);
+        }
     }
 
     public get name(): string { return this._name; }
@@ -32,8 +36,9 @@ export class WaveformModule {
     public get parent(): WaveformModule | null { return this._parent; }
 
     public addSignal(signal: WaveformSignal) { this._signals.push(signal); }
-    public addModule(module: WaveformModule) { this._modules.push(module); }
     public hasParent() { return this._parent !== null; }
+
+    private addModule(module: WaveformModule) { this._modules.push(module); }
 }
 
 /**
