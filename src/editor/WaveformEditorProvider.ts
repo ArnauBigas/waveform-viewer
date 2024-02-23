@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { WaveformDocument } from '../document/WaveformDocument';
+import { ModuleHierarchyRenderer } from './ModuleHierarchyRenderer';
 
 export abstract class WaveformEditorProvider<T extends WaveformDocument> implements vscode.CustomReadonlyEditorProvider<T> {
 
@@ -20,29 +21,18 @@ export abstract class WaveformEditorProvider<T extends WaveformDocument> impleme
     }
 
     private getHtmlForWebview(document: WaveformDocument) {
-        // Implement logic to generate HTML content for the webview
+        const hierarchyRenderer = new ModuleHierarchyRenderer(document.top);
         return `
             <!DOCTYPE html>
             <html>
             <head>
             </head>
             <body>
-                Top module name:
-                <ul>
-                    <li>${document.top.name}</li>
-                </ul>
-                Top module signals:
-                <ul>
-                    ${(function fun() {
-                        let result = "";
-                        for (const variable of document.top.signals) {
-                            result += `<li>${variable.name}</li>`;
-                        }
-                        return result;
-                    })()}
-                </ul>
+                Hiearchy:
+                ${hierarchyRenderer.render()}
             </body>
             </html>
         `;
     }
+
 }
