@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { WaveformEditorProvider } from './editor/waveformEditor';
+import { VCDEditorProvider } from './editor/VCDEditorProvider';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "waveform-viewer" is now active!');
 
-	context.subscriptions.push(WaveformEditorProvider.register());
+	context.subscriptions.push(VCDEditorProvider.register());
 }
 
 // This method is called when your extension is deactivated

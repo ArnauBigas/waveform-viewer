@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { WaveformDocument, WaveformModule, WaveformSignal } from "./WaveformDocument";
 
 interface VCDVariable {
     name: string;
@@ -33,6 +34,7 @@ class VCDParser {
     date: string;
     version: string;
     timescale: string;
+    top: WaveformModule | null;
 
     constructor() {
         this.variables = new Map();
@@ -40,13 +42,14 @@ class VCDParser {
         this.date = "unknown";
         this.version = "unknown";
         this.timescale = "unknown";
+        this.top = null;
     }
 
     parse(fileContent: string) {
         const tokens = fileContent.split(/[\s+\n+]/).filter((val) => val !== "");
         let state: VCDParserState = VCDParserState.DEFAULT;
-        let currentScope = "";
-        let currentID = "";
+        let currentScope: WaveformModule | null = null;
+        //let currentID = "";
         let currentType = "";
 
         for (const tok of tokens) {
@@ -62,7 +65,6 @@ class VCDParser {
                         this.timescale = "";
                         state = VCDParserState.READING_TIMESCALE;
                     } else if (tok === "$scope") {
-                        currentScope += ".";
                         state = VCDParserState.READING_SCOPE;
                     } else if (tok === "$upscope") {
                         state = VCDParserState.READING_UPSCOPE;
@@ -97,14 +99,20 @@ class VCDParser {
                     if (tok === "$end") {
                         state = VCDParserState.DEFAULT;
                     } else if (tok !== "module") {
-                        currentScope += tok;
+                        currentScope = new WaveformModule(tok, currentScope);
                     }
                     break;
                 case VCDParserState.READING_UPSCOPE:
                     if (tok === "$end") {
                         state = VCDParserState.DEFAULT;
                     } else {
-                        currentScope = currentScope.slice(0, currentScope.lastIndexOf('.'));
+                        if (currentScope === null) {
+                            throw Error("Parsed an $upscode command but current scope is null");
+                        }
+
+                        if (currentScope.hasParent()) {
+                            currentScope = currentScope.parent;
+                        }
                     }
                     break;
                 case VCDParserState.READING_VAR_TYPE:
@@ -116,14 +124,15 @@ class VCDParser {
                     break;
                 case VCDParserState.READING_VAR_ID:
                     state = VCDParserState.READING_VAR_NAME;
-                    currentID = tok;
+                    //currentID = tok;
                     break;
                 case VCDParserState.READING_VAR_NAME: {
                     state = VCDParserState.READING_VAR_UNK2;
-                    const name = currentScope + "." + tok;
-                    const id = currentID;
-                    const type = currentType;
-                    this.variables.set(tok, {id, type, name});
+                    const signal = new WaveformSignal(tok, currentType);
+                    if (currentScope === null) {
+                        throw Error("Parsed a $var command but current scope is null");
+                    }
+                    currentScope.addSignal(signal);
                     break;
                 }
                 case VCDParserState.READING_VAR_UNK2:
@@ -132,6 +141,11 @@ class VCDParser {
                     break;
             }
         }
+
+        if (currentScope === null) {
+            throw Error("Finished parsing the document but couldn't find a top module");
+        }
+        this.top = currentScope;
     }
 
     getVariable(id: string): VCDVariable | undefined {
@@ -139,48 +153,19 @@ class VCDParser {
     }
 }
 
-/**
- * Define the document (the data model) used for waveform files.
- */
-export class WaveformDocument implements vscode.CustomDocument {
+export class VCDDocument extends WaveformDocument {
 
 	static async create(
 		uri: vscode.Uri,
 	): Promise<WaveformDocument> {
         const contents = (await vscode.workspace.fs.readFile(uri)).toString();
-		return new WaveformDocument(uri, contents);
-	}
-
-	private readonly _uri: vscode.Uri;
-
-    private _parser: VCDParser;
-
-	private constructor(
-		uri: vscode.Uri,
-        contents: string
-	) {
-		this._uri = uri;
-        this._parser = new VCDParser();
-        this._parser.parse(contents);
-	}
-
-	public get uri() { return this._uri; }
-
-    public getVariables(): string[] {
-        const variables = [];
-        for (const variable of this._parser.variables.values()) {
-            variables.push(variable.type + " " + variable.name);
+        const parser = new VCDParser();
+        parser.parse(contents);
+        if (parser.top === null) {
+            throw Error("Parser couldn't find a top");
         }
-        return variables;
-    }
-
-	/**
-	 * Called by VS Code when there are no more references to the document.
-	 *
-	 * This happens when all editors for it have been closed.
-	 */
-	dispose(): void {
-
+		return new VCDDocument(uri, parser.top);
 	}
 
+    
 }

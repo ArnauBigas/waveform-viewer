@@ -1,21 +1,9 @@
 import * as vscode from 'vscode';
-import { WaveformDocument } from '../document/waveformDocument';
+import { WaveformDocument } from '../document/WaveformDocument';
 
-export class WaveformEditorProvider implements vscode.CustomReadonlyEditorProvider<WaveformDocument> {
+export abstract class WaveformEditorProvider<T extends WaveformDocument> implements vscode.CustomReadonlyEditorProvider<T> {
 
-	public static register(): vscode.Disposable {
-		return vscode.window.registerCustomEditorProvider(
-			WaveformEditorProvider.viewType,
-			new WaveformEditorProvider()
-        );
-	}
-
-	private static readonly viewType = 'waveform.vcd';
-
-	openCustomDocument(uri: vscode.Uri) {
-        // Implement logic to load and parse the custom document
-        return WaveformDocument.create(uri);
-    }
+	public abstract openCustomDocument(uri: vscode.Uri): PromiseLike<T> | T;
 
     resolveCustomEditor(document: WaveformDocument, webviewPanel: vscode.WebviewPanel) {
         // Implement logic to render the custom document in the webview
@@ -39,12 +27,16 @@ export class WaveformEditorProvider implements vscode.CustomReadonlyEditorProvid
             <head>
             </head>
             <body>
-                <h1>Variables:</h1>
+                Top module name:
+                <ul>
+                    <li>${document.top.name}</li>
+                </ul>
+                Top module signals:
                 <ul>
                     ${(function fun() {
                         let result = "";
-                        for (const variable of document.getVariables()) {
-                            result += `<li>${variable}</li>`;
+                        for (const variable of document.top.signals) {
+                            result += `<li>${variable.name}</li>`;
                         }
                         return result;
                     })()}
