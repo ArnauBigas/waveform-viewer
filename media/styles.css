@@ -1,13 +1,99 @@
-/* Remove default bullets */
-ul, .hierarchy {
-    list-style-type: none;
+/* Colors extracted fom https://code.visualstudio.com/api/references/theme-color#text-colors */
+
+/*** Styling of UI layout ***/
+
+.container {
+    display: flex;
+    border: 1px solid var(--vscode-widget-border);
+    height: 32rem;
+    width: 100%;
+}
+
+.resizer[data-direction='horizontal'] {
+    background-color: var(--vscode-widget-border);
+    cursor: ew-resize;
+    height: 100%;
+    width: 2px;
+}
+
+.resizer[data-direction='vertical'] {
+    background-color: var(--vscode-widget-border);
+    cursor: ns-resize;
+    height: 2px;
+    width: 100%;
+}
+
+.container__left {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+.container__right {
+    flex: 1;
+    display: flex;
+}
+
+.container__top {
+    height: 12rem;
+    min-height: 100px;
+}
+
+.container__bottom {
+    flex: 1;
+    margin: 5px;
+    min-height: 100px;
+}
+
+.container_title {
+    padding: 5px;
+    font-weight: bold;
+}
+
+/*** Styling of hierarchical views ***/
+
+.hierarchy {
+    position:relative;
+    overflow:hidden;
+}
+
+ul {
+    list-style: none;
+    padding: 0; 
+    margin:0;
+}
+
+li {
+    cursor: pointer;
+    margin:0;
+    padding: 0; 
     padding-left: 10px;
 }
 
-/* Remove margins and padding from the parent ul */
-.hierarchy {
-    margin: 0;
-    padding: 0;
+li .hierarchy_element {
+    padding-left: 100%;
+    margin-left: -100%;
+}
+
+li .hierarchy_element:not(.selected):hover {
+    color: var(--vscode-list-hoverForeground);
+    background: var(--vscode-list-hoverBackground);
+}
+
+.selected {
+    color: var(--vscode-list-activeSelectionForeground);
+    background: var(--vscode-list-activeSelectionBackground);
+}
+
+/* Hide the nested list */
+.nested {
+    display: none;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+.active {
+    display: block;
 }
 
 /* Style the caret/arrow */
@@ -19,7 +105,6 @@ ul, .hierarchy {
 /* Create the caret/arrow with a unicode, and style it */
 .caret::before {
     content: "\2304";
-    color: white;
     display: inline-block;
     margin-right: 6px;
     transform: rotate(-90deg);
@@ -28,16 +113,4 @@ ul, .hierarchy {
 /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
 .caret-down::before {
     transform: rotate(0deg);
-}
-
-/* Hide the nested list */
-.nested {
-    display: none;
-    padding-left: 10px;
-}
-
-/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
-.active {
-    display: block;
-    padding-left: 10px;
 }

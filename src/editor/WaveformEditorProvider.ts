@@ -33,7 +33,7 @@ export abstract class WaveformEditorProvider<T extends WaveformDocument> impleme
 		const scriptUri = webviewPanel.webview.asWebviewUri(scriptPath);
 		const stylesUri = webviewPanel.webview.asWebviewUri(stylesPath);
 
-        const hierarchyRenderer = new ModuleHierarchyRenderer(document.top);
+        const hierarchyRenderer = new ModuleHierarchyRenderer(document.top, 'module-hierarchy');
         return `
             <!DOCTYPE html>
             <html>
@@ -41,8 +41,24 @@ export abstract class WaveformEditorProvider<T extends WaveformDocument> impleme
                 <link href="${stylesUri}" rel="stylesheet">
             </head>
             <body>
-                Hiearchy:
-                ${hierarchyRenderer.render()}
+                <div class="container">
+                    <div class="container__left">
+                        <div class="container__top">
+                            <span class="container_title">HIERARCHY</span>
+                            ${hierarchyRenderer.render()}
+                        </div>
+                        <div class="resizer" data-direction="vertical"></div>
+                        <div class="container__bottom">
+                            <span class="container_title">SIGNALS</span>
+                            TODO
+                        </div>
+                    </div>
+                    <div class="resizer" data-direction="horizontal"></div>
+                    <div class="container__right">
+                        Waveform View
+                        TODO
+                    </div>
+                </div>
                 
                 <script src="${scriptUri}"></script>
             </body>

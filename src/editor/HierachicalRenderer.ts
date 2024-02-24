@@ -1,14 +1,18 @@
 export abstract class HierarchicalRenderer<T> {
     private readonly _top: T;
+    private readonly _id: string;
 
-    public constructor(top: T) { this._top = top; }
+    public constructor(top: T, id: string) {
+        this._top = top;
+        this._id = id;
+    }
 
     protected abstract getName(object: T): string;
     protected abstract getChildren(object: T): T[];
 
     public render(): string {
         return `
-            <ul class="hierarchy">
+            <ul class="hierarchy" id="${this._id}">
                 ${this.renderObject(this._top)}
             </ul> 
         `;
@@ -19,14 +23,14 @@ export abstract class HierarchicalRenderer<T> {
         console.log("Children length: " + children.length);
         if (children.length > 0) {
             return `
-                <li><span class="caret">${this.getName(object)}</span>
+                <li><div class="hierarchy_element"><span class="caret">${this.getName(object)}</span></div>
                 <ul class="nested">
                     ${this.renderObjectList(children)}
                 </ul>
                 </li>
             `;
         } else {
-            return `<li>${this.getName(object)}</li>`;
+            return `<li><div class="hierarchy_element">${this.getName(object)}</div></li>`;
         }
     }
 
