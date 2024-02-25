@@ -21,8 +21,20 @@ export abstract class WaveformEditorProvider<T extends WaveformDocument> impleme
         webviewPanel.webview.html = this.getHtmlForWebview(document, webviewPanel);
 
         // Listen for messages from the webview
-        webviewPanel.webview.onDidReceiveMessage(() => {
-            // Handle messages received from the webview
+        webviewPanel.webview.onDidReceiveMessage((message) => {
+            switch (message.command) {
+                case 'getModuleSignals':
+                  this.sendSignalList(webviewPanel.webview, document, message.module);
+                  return;
+              }
+        });
+    }
+
+    private sendSignalList(webview: vscode.Webview, document: WaveformDocument, path: string) {
+        const module = document.top.getModule(path);
+        webview.postMessage({
+            command: "setSignalList",
+            signals: module.signals.map(signal => signal.name)
         });
     }
 
@@ -45,18 +57,24 @@ export abstract class WaveformEditorProvider<T extends WaveformDocument> impleme
                     <div class="container__left">
                         <div class="container__top">
                             <span class="container_title">HIERARCHY</span>
+                            <div class="container_contents">
                             ${hierarchyRenderer.render()}
+                            </div>
                         </div>
                         <div class="resizer" data-direction="vertical"></div>
                         <div class="container__bottom">
                             <span class="container_title">SIGNALS</span>
-                            TODO
+                            <div class="container_contents">
+                                <div id="signal-list"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="resizer" data-direction="horizontal"></div>
                     <div class="container__right">
-                        Waveform View
-                        TODO
+                        <span class="container_title">WAVEFORM</span>
+                        <div class="container_contents">
+                            
+                        </div>
                     </div>
                 </div>
                 

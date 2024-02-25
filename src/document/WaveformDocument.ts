@@ -39,6 +39,23 @@ export class WaveformModule {
     public hasParent() { return this._parent !== null; }
 
     private addModule(module: WaveformModule) { this._modules.push(module); }
+
+    public getModule(path: string): WaveformModule {
+        const moduleNames = path.split('.').slice(1);
+        let currentModule: WaveformModule = this;
+
+        for (const name of moduleNames) {
+            const moduleFound = currentModule.modules.find(mod => mod.name === name);
+
+            if (moduleFound === undefined) {
+                throw Error("Incorrect module path: " + path + "; Module not found: " + name);
+            }
+
+            currentModule = moduleFound;
+        }
+
+        return currentModule;
+    }
 }
 
 /**

@@ -18,26 +18,28 @@ export abstract class HierarchicalRenderer<T> {
         `;
     }
 
-    private renderObject(object: T): string {
+    private renderObject(object: T, hierarchicalPath: string = ""): string {
+        const name = this.getName(object);
         const children = this.getChildren(object);
-        console.log("Children length: " + children.length);
+        const objectPath = (hierarchicalPath === "" ? "" : hierarchicalPath + ".") + name;
+
         if (children.length > 0) {
             return `
-                <li><div class="hierarchy_element"><span class="caret">${this.getName(object)}</span></div>
+                <li><div class="hierarchy_element" data-hierarchical-path=${objectPath}><span class="caret">${name}</span></div>
                 <ul class="nested">
-                    ${this.renderObjectList(children)}
+                    ${this.renderObjectList(children, objectPath)}
                 </ul>
                 </li>
             `;
         } else {
-            return `<li><div class="hierarchy_element">${this.getName(object)}</div></li>`;
+            return `<li><div class="hierarchy_element" data-hierarchical-path=${objectPath}>${name}</div></li>`;
         }
     }
 
-    private renderObjectList(objects: T[]): string {
+    private renderObjectList(objects: T[], hierarchicalPath: string = ""): string {
         let result = "";
         for (const obj of objects) {
-            result += this.renderObject(obj);
+            result += this.renderObject(obj, hierarchicalPath);
         }
         return result;
     }

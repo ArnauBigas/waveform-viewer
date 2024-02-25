@@ -1,3 +1,8 @@
+// eslint-disable-next-line no-undef
+const vscode = acquireVsCodeApi();
+
+// *** Showing/collapsing of menu items in hierarchy views ****
+
 var toggler = document.getElementsByClassName("caret");
 var i;
 
@@ -8,21 +13,30 @@ for (i = 0; i < toggler.length; i++) {
   });
 } 
 
-var hierarchy = document.getElementById('module-hierarchy');
+// *** Selection of menu items in hierarchy views ****
 
-for (const item of hierarchy.getElementsByClassName('hierarchy_element')) {
+var moduleHierarchy = document.getElementById('module-hierarchy');
+const moduleList = moduleHierarchy.getElementsByClassName('hierarchy_element');
+
+for (const item of moduleList) {
   item.onclick = function(event) {  
+    // Mark as selected
     if (event.ctrlKey || event.metaKey) {
       toggleSelect(item);
     } else {
       singleSelect(item);
     }
   
+    // Request the list of signals of this module
+    vscode.postMessage({
+      command: "getModuleSignals",
+      module: item.getAttribute("data-hierarchical-path")
+    });
   };
 }
 
 // prevent unneeded selection of list elements on clicks
-hierarchy.onmousedown = function() {
+moduleHierarchy.onmousedown = function() {
   return false;
 };
 
@@ -31,12 +45,42 @@ function toggleSelect(item) {
 }
 
 function singleSelect(item) {
-  let selected = hierarchy.querySelectorAll('.selected');
+  let selected = moduleHierarchy.querySelectorAll('.selected');
   for(let elem of selected) {
     elem.classList.remove('selected');
   }
   item.classList.add('selected');
 }
+
+// *** Display of signal list ****
+
+window.addEventListener("message", event => {
+    const message = event.data; // The JSON data our extension sent
+
+    switch (message.command) {
+        case "setSignalList": {
+          console.log("setSignalList");
+            const signalList = document.getElementById("signal-list");
+
+            const oldSignals = signalList.firstElementChild;
+            if (oldSignals !== null) {
+                signalList.removeChild(oldSignals);
+            }
+
+            let list = document.createElement("ul");
+            for (const signal of message.signals) {
+              const elem = document.createElement("li");
+              elem.innerText = signal;
+              list.appendChild(elem);
+            }
+
+            signalList.appendChild(list);
+            break;
+        }
+    }
+});
+
+// *** Resizing of split planes in UI layout ****
 
 document.addEventListener('DOMContentLoaded', function () {
   const resizable = function (resizer) {

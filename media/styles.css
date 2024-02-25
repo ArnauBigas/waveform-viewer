@@ -73,11 +73,19 @@ body {
     flex: 1;
     margin: 5px;
     min-height: 100px;
+    display: flex;
+    flex-direction: column;
 }
 
 .container_title {
     padding: 5px;
     font-weight: bold;
+    user-select: none; /* Prevent text selection */
+}
+
+.container_contents {
+    overflow: auto;
+    flex: 1;
 }
 
 /*** Styling of hierarchical views ***/
@@ -85,27 +93,30 @@ body {
 .hierarchy {
     position:relative;
     overflow:hidden;
-}
-
-ul {
     list-style: none;
     padding: 0; 
     margin:0;
 }
 
-li {
+.hierarchy ul {
+    list-style: none;
+    padding: 0; 
+    margin:0;
+}
+
+.hierarchy li {
     cursor: pointer;
     margin:0;
     padding: 0; 
     padding-left: 10px;
 }
 
-li .hierarchy_element {
+.hierarchy li .hierarchy_element {
     padding-left: 100%;
     margin-left: -100%;
 }
 
-li .hierarchy_element:not(.selected):hover {
+.hierarchy li .hierarchy_element:not(.selected):hover {
     color: var(--vscode-list-hoverForeground);
     background: var(--vscode-list-hoverBackground);
 }
