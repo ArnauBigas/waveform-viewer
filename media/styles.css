@@ -2,25 +2,54 @@
 
 /*** Styling of UI layout ***/
 
+html {
+    height: 100%;
+}
+
+body {
+    height: calc(100% - 2px);
+}
+
 .container {
     display: flex;
     border: 1px solid var(--vscode-widget-border);
-    height: 32rem;
+    height: 100%;
     width: 100%;
 }
 
 .resizer[data-direction='horizontal'] {
     background-color: var(--vscode-widget-border);
+    position: relative; /* Ensure positioning context for the pseudo-element */
     cursor: ew-resize;
     height: 100%;
-    width: 2px;
+    width: 1px;
+}
+
+.resizer[data-direction='horizontal']::before {
+    content: ''; /* Required for pseudo-elements */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -4px; /* Adjust as needed for the desired interactive area */
+    width: 9px; /* Increase this width for the interactive area */
 }
 
 .resizer[data-direction='vertical'] {
     background-color: var(--vscode-widget-border);
+    position: relative; /* Ensure positioning context for the pseudo-element */
     cursor: ns-resize;
-    height: 2px;
+    height: 1px;
     width: 100%;
+}
+
+.resizer[data-direction='vertical']::before {
+    content: ''; /* Required for pseudo-elements */
+    position: absolute;
+    top: -4px; /* Adjust as needed for the desired interactive area */
+    bottom: 4px; /* Increase this width for the interactive area */
+    left: 0;
+    right: 0;
+    height: 9px;
 }
 
 .container__left {
