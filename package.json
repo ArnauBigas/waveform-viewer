@@ -12,35 +12,42 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-		"customEditors": [
-			{
-				"viewType": "waveform.vcd",
-				"displayName": "Waveform (VCD)",
-				"selector": [
-					{
-						"filenamePattern": "*.vcd"
-					}
-				]
-			}
-		]
-	},
+    "customEditors": [
+      {
+        "viewType": "waveform.vcd",
+        "displayName": "Waveform (VCD)",
+        "selector": [
+          {
+            "filenamePattern": "*.vcd"
+          }
+        ]
+      }
+    ]
+  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "preunit-test": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "vscode-test"
+    "unit-test": "vscode-test",
+    "integration-test": "extest setup-and-run out/test/integration/*.js",
+    "test": "npm run unit-test && npm run integration-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.86.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/vscode": "^1.86.0",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
+    "@vscode/test-cli": "^0.0.6",
+    "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.56.0",
     "typescript": "^5.3.3",
-    "@vscode/test-cli": "^0.0.4",
-    "@vscode/test-electron": "^2.3.9"
+    "vscode-extension-tester": "^7.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArnauBigas/waveform-viewer.git"
   }
 }
