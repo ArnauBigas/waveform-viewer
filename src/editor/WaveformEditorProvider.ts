@@ -20,6 +20,8 @@ export abstract class WaveformEditorProvider<T extends WaveformDocument> impleme
 
         webviewPanel.webview.html = this.getHtmlForWebview(document, webviewPanel);
 
+        console.log(webviewPanel.webview.html);
+
         // Listen for messages from the webview
         webviewPanel.webview.onDidReceiveMessage((message) => {
             switch (message.command) {

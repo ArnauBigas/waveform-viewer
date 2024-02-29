@@ -25,7 +25,7 @@ export abstract class HierarchicalRenderer<T> {
 
         if (children.length > 0) {
             return `
-                <li><div class="hierarchy_element" data-hierarchical-path=${objectPath}><span class="caret">${name}</span></div>
+                <li><div class="hierarchy_element" id="${objectPath}" data-hierarchical-path=${objectPath}><span class="caret">${name}</span></div>
                 <ul class="nested">
                     ${this.renderObjectList(children, objectPath)}
                 </ul>
