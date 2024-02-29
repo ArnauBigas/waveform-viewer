@@ -30,7 +30,7 @@
     "watch": "tsc -watch -p ./",
     "preunit-test": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "unit-test": "vscode-test",
+    "unit-test": "vscode-test --coverage",
     "integration-test": "extest setup-and-run out/test/integration/*.js",
     "test": "npm run unit-test && npm run integration-test"
   },
